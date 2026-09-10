@@ -19,7 +19,7 @@ public class Metodos {
             o.setMarca(sc.next());
 
             System.out.println("Ingrese el modelo del carro:");
-            o.setModelo(m.ValidarEentero(sc));
+            o.setModelo(m.ValidarEntero(sc));
 
             System.out.println("Ingrese el precio del carro:");
             o.setPrecio(sc.nextDouble());
@@ -27,7 +27,7 @@ public class Metodos {
             pila.push(o);
 
             System.out.println("Desea continuar ingresando registros 1) si, 2) no");
-            int opt = m.ValidarEentero(sc);
+            int opt = m.ValidarEntero(sc);
 
             if (opt == 2) {
                 continuar = false;
@@ -85,7 +85,7 @@ public class Metodos {
         return pila;
     }
 
-    public int ValidarEentero(Scanner sc) {
+    public int ValidarEntero(Scanner sc) {
         while (!sc.hasNextInt()) {
             System.out.println(
                     "Por favor tenga en cuenta que se le esta pidiendo un dato numerico");
