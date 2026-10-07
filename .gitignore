@@ -22,3 +22,133 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+
+
+EJERCICIO 6 – Call Center
+Un centro de llamadas recibe solicitudes de clientes. Cada llamada tiene cliente, motivo, hora, prioridad y
+estado. Los operadores atienden las solicitudes durante la jornada. Una solicitud puede ser transferida,
+cancelada, actualizada o finalizada.
+ObjLlamada.java
+public class ObjLlamada {
+private int id;
+private String cliente;
+private String motivo;
+private String hora;
+private int prioridad;
+private int estado;
+public ObjLlamada() {}
+public int getId() { return id; }
+public void setId(int id) { this.id = id; }
+public String getCliente() { return cliente; }
+public void setCliente(String cliente) { this.cliente = cliente; }
+public String getMotivo() { return motivo; }
+public void setMotivo(String motivo) { this.motivo = motivo; }
+public String getHora() { return hora; }
+public void setHora(String hora) { this.hora = hora; }
+public int getPrioridad() { return prioridad; }
+public void setPrioridad(int prioridad) { this.prioridad = prioridad; }
+public int getEstado() { return estado; }
+public void setEstado(int estado) { this.estado = estado; }
+}
+Metodos.java
+import java.util.Queue;
+import java.util.Scanner;
+public class Metodos {
+public Queue&lt;ObjLlamada&gt; Llenar(Queue&lt;ObjLlamada&gt; cola, Scanner sc) {
+int op = 1;
+while (op == 1) {
+ObjLlamada o = new ObjLlamada();
+System.out.println(&quot;ID:&quot;); o.setId(sc.nextInt());
+System.out.println(&quot;Cliente:&quot;); o.setCliente(sc.next());
+System.out.println(&quot;Motivo:&quot;); o.setMotivo(sc.next());
+System.out.println(&quot;Hora:&quot;); o.setHora(sc.next());
+System.out.println(&quot;Prioridad 1) Normal 2) Alta:&quot;);
+o.setPrioridad(sc.nextInt());
+o.setEstado(1);
+cola.offer(o);
+System.out.println(&quot;1) Otra 2) Terminar&quot;); op = sc.nextInt();
+}
+return cola;
+}
+public void Mostrar(Queue&lt;ObjLlamada&gt; cola) {
+for (ObjLlamada o : cola)
+System.out.println(o.getId()+&quot; &quot;+o.getCliente()+&quot; &quot;+o.getMotivo()
+
++&quot; &quot;+o.getHora()+&quot; P:&quot;+o.getPrioridad()+&quot; &quot;+Estado(o.getEstado()));
+}
+public String Estado(int e) {
+if (e == 1) return &quot;Pendiente&quot;;
+if (e == 2) return &quot;En llamada&quot;;
+if (e == 3) return &quot;Transferida&quot;;
+if (e == 4) return &quot;Cancelada&quot;;
+return &quot;Finalizada&quot;;
+}
+public void Atender(Queue&lt;ObjLlamada&gt; cola) {
+if (!cola.isEmpty()) cola.peek().setEstado(2);
+}
+public void Transferir(Queue&lt;ObjLlamada&gt; cola) {
+if (!cola.isEmpty() &amp;&amp; cola.peek().getEstado() == 2)
+cola.peek().setEstado(3);
+}
+public void Cancelar(Queue&lt;ObjLlamada&gt; cola, Scanner sc) {
+System.out.println(&quot;ID:&quot;);
+int id = sc.nextInt();
+for (ObjLlamada o : cola)
+if (o.getId() == id) {
+o.setEstado(4); cola.remove(o); return;
+}
+}
+public void Actualizar(Queue&lt;ObjLlamada&gt; cola, Scanner sc) {
+System.out.println(&quot;ID:&quot;);
+int id = sc.nextInt();
+for (ObjLlamada o : cola)
+if (o.getId() == id &amp;&amp; o.getEstado() == 1) {
+System.out.println(&quot;Nuevo motivo:&quot;);
+o.setMotivo(sc.next()); return;
+}
+}
+public void Finalizar(Queue&lt;ObjLlamada&gt; cola) {
+if (!cola.isEmpty() &amp;&amp; cola.peek().getEstado() == 2) {
+cola.peek().setEstado(5); cola.poll();
+}
+}
+}
+Menu.java
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+public class Menu {
+public static void main(String[] args) {
+Scanner sc = new Scanner(System.in);
+Queue&lt;ObjLlamada&gt; cola = new LinkedList&lt;&gt;();
+Metodos m = new Metodos();
+int opt = 0;
+while (opt != 7) {
+
+System.out.println(&quot;\n--- CALL CENTER ---&quot;);
+System.out.println(&quot;1) Registrar llamada&quot;);
+System.out.println(&quot;2) Mostrar llamadas&quot;);
+System.out.println(&quot;3) Atender&quot;);
+System.out.println(&quot;4) Transferir&quot;);
+System.out.println(&quot;5) Cancelar&quot;);
+System.out.println(&quot;6) Actualizar / finalizar&quot;);
+System.out.println(&quot;7) Salir&quot;);
+opt = sc.nextInt();
+switch (opt) {
+case 1: cola = m.Llenar(cola, sc); break;
+case 2: m.Mostrar(cola); break;
+case 3: m.Atender(cola); break;
+case 4: m.Transferir(cola); break;
+case 5: m.Cancelar(cola, sc); break;
+case 6:
+System.out.println(&quot;1) Actualizar 2) Finalizar&quot;);
+int x = sc.nextInt();
+if (x == 1) m.Actualizar(cola, sc);
+else m.Finalizar(cola);
+break;
+}
+}
+sc.close();
+}
+}
